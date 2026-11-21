@@ -27,7 +27,12 @@ def main() -> None:
     if not TEXT.strip():
         raise SystemExit("entry text is only whitespace")
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_bytes(TEXT.encode("utf-8"))
+    data = TEXT.encode("utf-8")
+    OUTPUT.write_bytes(data)
+    # Read the file back and confirm the write landed byte for byte;
+    # a silent partial write would send a broken text to the judge.
+    if OUTPUT.read_bytes() != data:
+        raise SystemExit("entry.txt did not round-trip byte for byte")
 
 
 if __name__ == "__main__":
